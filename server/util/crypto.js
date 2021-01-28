@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { pass } = require('../database/database');
+// const { pass } = require('../database/database');
 
 exports.generatePassword = (password) => {
     return crypto.scryptSync(password, 'salt', 12);
