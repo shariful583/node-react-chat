@@ -1,54 +1,34 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+// const User = require('../models/User');
+const jwt = require("jsonwebtoken");
+const connection = require("../database/database");
+const { generatePassword, verifyPassword } = require("../util/crypto");
 
-const { generatePassword, verifyPassword } = require('../util/crypto');
-
-exports.login = async (req,res) => {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({email, password: generatePassword(password)});
-
-    if(user) {
-        let token = jwt.sign({
-            exp: Math.floor(Date.now() / 1000) + (60 * 60),
-            data: {
-                name: user.name,
-                email: user.email,
-                id: user.id
-            }
-        }, 'soboz');
-
-        res.json({
-            message: 'Succesfully logged in',
-            user: user,
-            token: `${token}`
-        });
-    } else {
-        res.json({
-            message: 'Email or password is wrong'
-        });
-    }
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
 };
 
-exports.register = async (req,res) => {
-    const { name, email, password } = req.body;
-    const user = new User({name, email, password: generatePassword(password)});
-    const regUser = await user.save();
+exports.register = async (req, res) => {
+  const conn = await connection.dbConnection();
+  const { name, email, password } = req.body;
 
+  const insertQuery = `INSERT INTO user (name, email, password) values('${name}', '${email}', '${generatePassword(
+      password
+  )}')`;
 
-    res.json({
-        message: 'Account succesfully created',
-        user: regUser
-    });
+  const [row, fields] = await conn.query(insertQuery);
 
+  const  [user] = await conn.query(`SELECT name,email FROM user WHERE id = ${row.insertId}`)
+
+  // console.log(row);
+
+  res.json({
+    user: user,
+  })
 };
 
-exports.userList = async(req, res) => {
-    const allUser = await User.find();
-
-    res.json({
-        message: 'User List',
-        user: allUser
-    });
-
-}
+exports.userList = async (req, res) => {
+  res.json({
+    message: "User List",
+    user: allUser,
+  });
+};
