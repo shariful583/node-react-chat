@@ -4,6 +4,6 @@ const { catchErrors } = require('../handler/errorHandler');
 const Controller = require('../controllers/index');
 const auth = require('../middleware/auth');
 
-router.post('/', auth, catchErrors(Controller.ChatroomController.createChatRoom));
+router.get('/chat/list', auth, catchErrors(Controller.ChatroomController.chatUserList));
 
 module.exports = router;

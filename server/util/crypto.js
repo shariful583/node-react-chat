@@ -6,6 +6,8 @@ exports.generatePassword = (password) => {
 };
 
 exports.verifyPassword = (typePassword, storePassword) => {
-    const verify = crypto.createVerify('SHA256'); 
-    return verify.verify(storePassword, typePassword);
+    console.log(typePassword, storePassword)
+    const verify = crypto.createVerify('SHA256');
+    console.log(verify.verify(storePassword, typePassword))
+    return verify.verify(typePassword, storePassword);
 };
